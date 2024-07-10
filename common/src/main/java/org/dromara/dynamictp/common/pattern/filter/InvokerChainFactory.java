@@ -29,12 +29,15 @@ public final class InvokerChainFactory {
 
     @SafeVarargs
     public static<T> InvokerChain<T> buildInvokerChain(Invoker<T> target, Filter<T>... filters) {
-
         InvokerChain<T> invokerChain = new InvokerChain<>();
+        // 头插法
         Invoker<T> last = target;
         for (int i = filters.length - 1; i >= 0; i--) {
+            // 头变成头下一个
             Invoker<T> next = last;
+            // 去除最后一个filter
             Filter<T> filter = filters[i];
+            // 形成单链表
             last = context -> filter.doFilter(context, next);
         }
         invokerChain.setHead(last);
